@@ -1,6 +1,7 @@
 'use client';
 
 import { WasteSubmission } from '@/app/types';
+import Image from 'next/image';
 import { Clock, CheckCircle, XCircle, Star } from 'lucide-react';
 
 interface WasteCardProps {
@@ -38,12 +39,14 @@ export default function WasteCard({ submission, onVerify, showVerifyButton }: Wa
 
   return (
     <div className="glass-effect rounded-xl p-6 transition-all hover:scale-[1.02]">
-      <div className="flex items-start gap-4">
-        <img
+        <Image
           src={submission.imageUrl}
           alt="Waste submission"
-          className="w-24 h-24 object-cover rounded-lg border border-dark-border"
+          width={96}
+          height={96}
+          className="object-cover rounded-lg border border-dark-border"
         />
+       
         
         <div className="flex-1">
           <div className="flex items-center justify-between mb-2">
@@ -79,7 +82,6 @@ export default function WasteCard({ submission, onVerify, showVerifyButton }: Wa
               Verify Submission
             </button>
           )}
-        </div>
       </div>
     </div>
   );

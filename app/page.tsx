@@ -1,6 +1,8 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import { Recycle, Star, Upload, TrendingUp, Award, ChevronRight, Zap, Globe, Users, Camera, Brain, ArrowRight, Menu, X, CheckCircle, BarChart3, Target, Shield } from 'lucide-react';
+import Image from 'next/image';
+
 
 // Types
 interface WasteSubmission {
@@ -241,7 +243,7 @@ const ImageUpload = ({ onImageSelect, preview, label }: {
         />
         <div className="border-2 border-dashed border-gray-600 rounded-xl p-8 text-center hover:border-green-400 transition-colors bg-slate-800/50">
           {preview ? (
-            <img src={preview} alt="Preview" className="max-w-full max-h-64 mx-auto rounded-lg" />
+            <Image src={preview} alt="Preview" width={500} height={500} className="max-w-full max-h-64 mx-auto rounded-lg" />
           ) : (
             <div className="space-y-4">
               <Camera size={48} className="text-gray-400 mx-auto" />
@@ -275,10 +277,12 @@ const WasteCard = ({ submission, onVerify, showVerifyButton = false }: {
   return (
     <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-6 border border-slate-700">
       <div className="flex gap-4">
-        <img
+        <Image
           src={submission.imageUrl}
           alt="Waste submission"
-          className="w-20 h-20 rounded-lg object-cover"
+          width={80}
+          height={80}
+          className="rounded-lg object-cover"
         />
         <div className="flex-1">
           <div className="flex items-start justify-between mb-2">

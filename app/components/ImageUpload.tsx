@@ -2,6 +2,7 @@
 
 import { useState, useRef } from 'react';
 import { Upload, X } from 'lucide-react';
+import Image from 'next/image';
 
 interface ImageUploadProps {
   onImageSelect: (file: File, preview: string) => void;
@@ -33,7 +34,6 @@ export default function ImageUpload({ onImageSelect, preview, label }: ImageUplo
       handleFile(files[0]);
     }
   };
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
     if (files && files[0]) {
@@ -54,7 +54,6 @@ export default function ImageUpload({ onImageSelect, preview, label }: ImageUplo
   const openFileDialog = () => {
     fileInputRef.current?.click();
   };
-
   return (
     <div className="w-full">
       <label className="block text-sm font-medium text-dark-text mb-2">
@@ -63,10 +62,13 @@ export default function ImageUpload({ onImageSelect, preview, label }: ImageUplo
       
       {preview ? (
         <div className="relative">
-          <img
+          <Image
             src={preview}
             alt="Preview"
+            width={500}
+            height={256}
             className="w-full h-64 object-cover rounded-lg border border-dark-border"
+            priority
           />
           <button
             onClick={() => onImageSelect(new File([], ''), '')}

@@ -400,9 +400,25 @@ export default function AdvancedEcoWasteApp() {
 
     setAnalyzing(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 2000)); // Simulate API call
-      
-      // Mock analysis result
+      const response = await fetch('/api/analyze-waste', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          image: imagePreview
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to analyze image');
+      }
+
+      const result = await response.json();
+      setAnalysis(result);
+    } catch (error) {
+      console.error('Error analyzing image:', error);
+      // Fallback to mock data if API fails
       const wasteTypes: Array<'plastic' | 'paper' | 'metal' | 'glass' | 'organic'> = ['plastic', 'paper', 'metal', 'glass', 'organic'];
       const quantities: Array<'small' | 'medium' | 'large'> = ['small', 'medium', 'large'];
       
@@ -411,10 +427,8 @@ export default function AdvancedEcoWasteApp() {
         quantity: quantities[Math.floor(Math.random() * quantities.length)],
         confidence: Math.floor(Math.random() * 20) + 80,
         estimatedPoints: Math.floor(Math.random() * 15) + 5,
-        description: 'AI-detected recyclable materials with high confidence'
+        description: 'Fallback analysis - API temporarily unavailable'
       });
-    } catch (error) {
-      console.error('Error analyzing image:', error);
     } finally {
       setAnalyzing(false);
     }

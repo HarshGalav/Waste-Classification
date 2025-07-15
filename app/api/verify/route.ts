@@ -1,23 +1,36 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/app/lib/auth';
+import { updateSubmissionStatus } from '@/app/lib/database';
 
 export async function POST(request: NextRequest) {
   try {
-    await request.json();
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { submissionId, status, verifierImage } = await request.json();
     
-    // In a real app, you would:
-    // 1. Compare the original image with verifier image using AI
-    // 2. Update the submission status in database
-    // 3. Award points to user
+    if (!submissionId || !status) {
+      return NextResponse.json({ error: 'Submission ID and status are required' }, { status: 400 });
+    }
+
+    if (!['verified', 'rejected'].includes(status)) {
+      return NextResponse.json({ error: 'Invalid status' }, { status: 400 });
+    }
+
+    const updatedSubmission = await updateSubmissionStatus(submissionId, status, verifierImage);
     
-    // For demo, we'll just approve it
-    return NextResponse.json({
-      success: true,
-      status: 'verified',
-      pointsAwarded: 6
-    });
-  } catch {
+    if (!updatedSubmission) {
+      return NextResponse.json({ error: 'Submission not found' }, { status: 404 });
+    }
+
+    return NextResponse.json(updatedSubmission);
+  } catch (error) {
+    console.error('Error in verify API:', error);
     return NextResponse.json(
-      { error: 'Verification failed' },
+      { error: 'Failed to verify submission' },
       { status: 500 }
     );
   }

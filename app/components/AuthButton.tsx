@@ -1,72 +1,45 @@
 'use client';
 
-import { signIn, signOut, useSession } from 'next-auth/react';
+import { useSession, signIn, signOut } from 'next-auth/react';
 import { LogIn, LogOut, User } from 'lucide-react';
-import Image from 'next/image'
 
-interface AuthButtonProps {
-  variant?: 'primary' | 'secondary';
-  onSignInSuccess?: () => void;
-}
-
-export default function AuthButton({ variant = 'primary', onSignInSuccess }: AuthButtonProps) {
+export default function AuthButton() {
   const { data: session, status } = useSession();
 
   if (status === 'loading') {
     return (
-      <div className="px-6 py-2 bg-gray-600 text-gray-300 rounded-lg animate-pulse">
-        Loading...
+      <div className="flex items-center gap-2 px-4 py-2 bg-slate-700 rounded-lg">
+        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+        <span className="text-white text-sm">Loading...</span>
       </div>
     );
   }
 
   if (session) {
     return (
-      <div className="flex items-center gap-4">
-        <div className="flex items-center gap-2">
-          {session.user?.image ? (
-            <Image
-            src={session.user.image || '/default-avatar.png'}
-            alt={session.user.name || 'User'}
-            width={32}
-            height={32}
-            className="rounded-full"
-          />
-          ) : (
-            <div className="w-8 h-8 bg-gradient-to-br from-green-400 to-blue-500 rounded-full flex items-center justify-center">
-              <User size={16} className="text-white" />
-            </div>
-          )}
-          <span className="text-white font-medium hidden sm:block">
-            {session.user?.name}
-          </span>
+      <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 px-3 py-2 bg-slate-700 rounded-lg">
+          <User size={16} className="text-green-400" />
+          <span className="text-white text-sm">{session.user?.name}</span>
         </div>
         <button
           onClick={() => signOut()}
-          className="flex items-center gap-2 px-4 py-2 text-gray-300 hover:text-white transition-colors"
+          className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors"
         >
           <LogOut size={16} />
-          <span className="hidden sm:block">Sign Out</span>
+          Sign Out
         </button>
       </div>
     );
   }
 
-  const handleSignIn = async () => {
-    const result = await signIn('google', { redirect: false });
-    if (result?.ok && onSignInSuccess) {
-      onSignInSuccess();
-    }
-  };
-
-  const buttonClasses = variant === 'primary'
-    ? "px-6 py-2 bg-gradient-to-r from-green-400 to-blue-500 text-white rounded-lg font-medium hover:shadow-lg hover:shadow-green-500/25 transition-all transform hover:scale-105 flex items-center gap-2"
-    : "px-4 py-2 bg-white/10 backdrop-blur-sm text-white rounded-lg font-medium hover:bg-white/20 transition-all border border-white/20 flex items-center gap-2";
-
   return (
-    <button onClick={handleSignIn} className={buttonClasses}>
+    <button
+      onClick={() => signIn('google')}
+      className="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-green-400 to-blue-500 text-white rounded-lg font-medium hover:shadow-lg hover:shadow-green-500/25 transition-all"
+    >
       <LogIn size={16} />
-      Sign in with Google
+      Sign In with Google
     </button>
   );
 }
